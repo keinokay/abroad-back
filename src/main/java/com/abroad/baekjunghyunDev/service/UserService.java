@@ -40,4 +40,9 @@ public class UserService {
 		userRepository.save(user);
 		return  200;
 	}
+	
+	public boolean findUser(String email) {
+        boolean result = userRepository.existsByEmail(email);
+        return result;
+	}
 }

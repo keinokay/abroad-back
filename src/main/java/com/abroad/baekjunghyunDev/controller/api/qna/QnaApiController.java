@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abroad.baekjunghyunDev.config.auth.PrincipalDetail;
-import com.abroad.baekjunghyunDev.config.schema.SchemaService;
 import com.abroad.baekjunghyunDev.dto.ResponseDto;
 import com.abroad.baekjunghyunDev.model.qna.Board;
 import com.abroad.baekjunghyunDev.model.video.Video;
+import com.abroad.baekjunghyunDev.service.SchemaService;
 import com.abroad.baekjunghyunDev.service.qna.QnaService;
 
 @RestController
@@ -31,8 +31,9 @@ public class QnaApiController {
 	@Autowired
 	SchemaService schemaService;
 	
-	@PostMapping("/v1/qna")
-	public ResponseDto<Board> save(@RequestBody Board board, @AuthenticationPrincipal PrincipalDetail principal){
+	@PostMapping("/v1/{site}/qna")
+	public ResponseDto<Board> save(@PathVariable String site, @RequestBody Board board, @AuthenticationPrincipal PrincipalDetail principal){
+        schemaService.changeSchema(site);
 		Board newBoard = boardService.글쓰기(board, principal.getUser());
 		return new ResponseDto<Board>(HttpStatus.OK.value(), newBoard); 
 	}

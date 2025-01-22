@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.abroad.baekjunghyunDev.config.auth.PrincipalDetailService;
+import com.abroad.baekjunghyunDev.config.schema.SiteExtractorFilter;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.Cookie;
@@ -47,6 +48,9 @@ public class SecurityConfig {
 		return auth.build();
 	}
 	
+	@Autowired
+	private SiteExtractorFilter siteExtractorFilter;
+	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http.
@@ -54,12 +58,12 @@ public class SecurityConfig {
 			cors(cors->cors.configurationSource(corsConfigurationSource())).
 			authorizeHttpRequests(authz->authz.
 					dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll().
-					requestMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**", "/v1/signupProc", "/v1/loginProc", "/a/v1/qna","/b/v1/qna", "/v1/video", "/v1/me").permitAll().
+					requestMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**", "/v1/*/signupProc", "/v1/*/loginProc", "/v1/*/qna","/v1/*/qna", "/v1/*/video", "/v1/*/me").permitAll().
 					anyRequest().authenticated()).
 			formLogin(formLogin-> formLogin.
 					loginPage("/auth/loginForm").permitAll().
 					usernameParameter("email").
-					loginProcessingUrl("/v1/loginProc")
+					loginProcessingUrl("/v1/*/loginProc")
 					.successHandler((request, response, authentication) -> {
 				        response.setStatus(HttpServletResponse.SC_OK);
 				        response.setContentType("application/json");
@@ -83,8 +87,11 @@ public class SecurityConfig {
 		            .authenticationEntryPoint((request, response, authException) -> {
 		                // 인증되지 않은 사용자에 대해 리다이렉트 대신 401 Unauthorized를 반환
 		                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-		            }));;
+		            }));
 		
+            // SiteExtractorFilter를 Security 필터 체인의 UsernamePasswordAuthenticationFilter 이전에 추가
+            http.addFilterBefore(siteExtractorFilter, UsernamePasswordAuthenticationFilter.class);
+
 		return http.build();
 	}
 	

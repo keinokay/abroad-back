@@ -26,6 +26,7 @@ public class QnaService {
 	}
 	
 	public Board 글쓰기(Board board, User user) {
+		
 		board.setUser(user);
 		board.setPrivate(board.isPrivate());
 		
