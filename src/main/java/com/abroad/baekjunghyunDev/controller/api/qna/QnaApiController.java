@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abroad.baekjunghyunDev.config.auth.PrincipalDetail;
+import com.abroad.baekjunghyunDev.config.schema.SchemaService;
 import com.abroad.baekjunghyunDev.dto.ResponseDto;
 import com.abroad.baekjunghyunDev.model.qna.Board;
 import com.abroad.baekjunghyunDev.model.video.Video;
@@ -27,6 +28,8 @@ import com.abroad.baekjunghyunDev.service.qna.QnaService;
 public class QnaApiController {
 	@Autowired
 	QnaService boardService;
+	@Autowired
+	SchemaService schemaService;
 	
 	@PostMapping("/v1/qna")
 	public ResponseDto<Board> save(@RequestBody Board board, @AuthenticationPrincipal PrincipalDetail principal){
@@ -40,8 +43,9 @@ public class QnaApiController {
 		return new ResponseDto<Board>(HttpStatus.OK.value(), board);
 	}
 	
-	@GetMapping("/v1/qna")
-	public ResponseDto<Page<Board>> AllBoard(Model model, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+	@GetMapping("/{site}/v1/qna")
+	public ResponseDto<Page<Board>> AllBoard(@PathVariable String site, Model model, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        schemaService.changeSchema(site);
 		Page<Board> boards = boardService.글목록(pageable);	
 		return new ResponseDto<Page<Board>>(HttpStatus.OK.value(), boards);
 	}
