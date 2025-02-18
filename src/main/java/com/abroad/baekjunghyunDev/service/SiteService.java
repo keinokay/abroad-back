@@ -15,7 +15,7 @@ public class SiteService {
 
     @Transactional
     public void saveSite(String siteValue) {
-    	siteRepository.deleteAll(); 
+    	siteRepository.deleteAllInBatch(); 
         Site newSite = new Site(0, siteValue);  // id를 0으로 설정
         siteRepository.save(newSite); 
         //return siteRepository.save(newSite);  // save 시 id는 무시되고 자동 증가된 값이 할당됨
