@@ -17,7 +17,12 @@ import lombok.NoArgsConstructor;
 public class Site {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	private int siteId; 
 	private String site;
+	
+    public Site(int siteId, String siteValue) {
+    	this.siteId = siteId;
+        this.site = siteValue;
+    }
 }
