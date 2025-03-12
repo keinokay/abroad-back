@@ -43,6 +43,7 @@ spring:
     aws:
       region:
         static: ap-northeast-2
+      
 
   servlet:
     multipart:
